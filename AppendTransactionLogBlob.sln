@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppendTransactionLogBlob", "AppendTransactionLogBlob\AppendTransactionLogBlob.csproj", "{FB37A223-3974-4A81-A39B-DE39B51A19DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppendTransactionLogBlobTests", "AppendTransactionLogBlobTests\AppendTransactionLogBlobTests.csproj", "{24089B35-98CD-4BA9-AC44-AAC931DC300B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB37A223-3974-4A81-A39B-DE39B51A19DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB37A223-3974-4A81-A39B-DE39B51A19DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB37A223-3974-4A81-A39B-DE39B51A19DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB37A223-3974-4A81-A39B-DE39B51A19DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24089B35-98CD-4BA9-AC44-AAC931DC300B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24089B35-98CD-4BA9-AC44-AAC931DC300B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24089B35-98CD-4BA9-AC44-AAC931DC300B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24089B35-98CD-4BA9-AC44-AAC931DC300B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09127F60-C788-4867-89E8-20380AD123BD}
+	EndGlobalSection
+EndGlobal

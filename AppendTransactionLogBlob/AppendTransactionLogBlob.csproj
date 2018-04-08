@@ -52,10 +52,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConcatStream.cs" />
+    <Compile Include="CloudEvent.cs" />
+    <Compile Include="CloudEventBlobName.cs" />
+    <Compile Include="CloudEventLogReader.cs" />
+    <Compile Include="CloudEventLogSegment.cs" />
+    <Compile Include="CloudEventStorage.cs" />
+    <Compile Include="CloudEventStore.cs" />
+    <Compile Include="CloudEventStoreLogBuilder.cs" />
+    <Compile Include="CloudEventStreamEntity.cs" />
+    <Compile Include="CloudEventTransaction.cs" />
+    <Compile Include="CloudEventTransactionLogEntity.cs" />
+    <Compile Include="CloudEventLogSequenceNumber.cs" />
+    <Compile Include="Internal\AsyncUtils.cs" />
+    <Compile Include="Internal\BinaryUtils.cs" />
+    <Compile Include="Internal\CryptoUtils.cs" />
+    <Compile Include="Internal\RunningStat.cs" />
+    <Compile Include="Metrics\Bucket.cs" />
+    <Compile Include="Metrics\BucketManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamUtil.cs" />
+    <Compile Include="Internal\StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

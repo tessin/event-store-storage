@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudEventStoreTests", "CloudEventStoreTests\CloudEventStoreTests.csproj", "{DBD76576-1AF2-498E-8646-DFEB73C4BD46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudEventStore", "CloudEventStore\CloudEventStore.csproj", "{2F5EA2C5-5428-4A6E-82F3-6A1883072F91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12CBFE2E-5257-4861-A627-85263D76DBCF}"
+	ProjectSection(SolutionItems) = preProject
+		DESIGN.md = DESIGN.md
+		JOURNAL.md = JOURNAL.md
+		README.md = README.md
+		TODO.md = TODO.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBD76576-1AF2-498E-8646-DFEB73C4BD46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD76576-1AF2-498E-8646-DFEB73C4BD46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBD76576-1AF2-498E-8646-DFEB73C4BD46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBD76576-1AF2-498E-8646-DFEB73C4BD46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F5EA2C5-5428-4A6E-82F3-6A1883072F91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F5EA2C5-5428-4A6E-82F3-6A1883072F91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F5EA2C5-5428-4A6E-82F3-6A1883072F91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F5EA2C5-5428-4A6E-82F3-6A1883072F91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09127F60-C788-4867-89E8-20380AD123BD}
+	EndGlobalSection
+EndGlobal

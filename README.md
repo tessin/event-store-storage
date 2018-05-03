@@ -1,0 +1,1 @@
+`CloudEventStore` is an event store built on top of Azure append blobs and Azure tables, purposefully built to be used from within an Azure function. This is not the fastest event store but it is cheap and reliable.

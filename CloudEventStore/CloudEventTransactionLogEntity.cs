@@ -1,5 +1,6 @@
 ﻿using CloudEventStore.Internal;
 using Microsoft.WindowsAzure.Storage.Table;
+using System;
 
 namespace CloudEventStore
 {

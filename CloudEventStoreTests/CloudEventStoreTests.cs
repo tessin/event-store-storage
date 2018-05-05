@@ -30,8 +30,8 @@ namespace CloudEventStore
 
             await store.AppendAsync(
                 new[] {
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 2, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 2, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
                 }
             );
 
@@ -55,26 +55,26 @@ namespace CloudEventStore
 
             await store.AppendAsync(
                 new[] {
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 2, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 2, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
                 }
             );
 
             await store.AppendAsync(
                 new[] {
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 3, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 4, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 5, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 3, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 4, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 5, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
                 }
             );
 
             await store.AppendAsync(
                 new[] {
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 6, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 7, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 8, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 9, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
-                    new UncomittedEvent { StreamId = streamId, SequenceNumber = 10, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 6, TypeId = typeId1, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 7, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 8, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 9, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
+                    new UncommittedEvent { StreamId = streamId, SequenceNumber = 10, TypeId = typeId2, Payload = new ArraySegment<byte>(CryptoUtils.GetBytes(r.Next(256))), Created = DateTimeOffset.UtcNow },
                 }
             );
 
@@ -126,13 +126,13 @@ namespace CloudEventStore
             Assert.AreEqual(10, result.Results.Count);
         }
 
-        static IEnumerable<UncomittedEvent> GetTestDataStream(int n)
+        static IEnumerable<UncommittedEvent> GetTestDataStream(int n)
         {
             var typeId = Guid.NewGuid();
             for (int i = 0; i < n; i++)
             {
                 var streamId = Guid.NewGuid();
-                yield return new UncomittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId, Payload = new ArraySegment<byte>(), Created = DateTimeOffset.UtcNow };
+                yield return new UncommittedEvent { StreamId = streamId, SequenceNumber = 1, TypeId = typeId, Payload = new ArraySegment<byte>(), Created = DateTimeOffset.UtcNow };
             }
         }
 

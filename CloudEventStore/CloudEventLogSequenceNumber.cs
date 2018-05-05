@@ -41,7 +41,7 @@ namespace CloudEventStore
 
             Value = ((logNumber & LogNumberMask) << 38) | (sequenceNumber & SequenceNumberMask);
         }
-
+        
         [Obsolete]
         public CloudEventLogSequenceNumber SetSequenceNumber(long sequenceNumber)
         {

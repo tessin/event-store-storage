@@ -21,7 +21,7 @@ namespace CloudEventStore
             _stat = stat;
         }
 
-        public async Task AppendAsync(IEnumerable<UncomittedEvent> uncomitted)
+        public async Task AppendAsync(IEnumerable<UncommittedEvent> uncomitted)
         {
             var t0 = DateTime.UtcNow;
 
@@ -59,7 +59,7 @@ namespace CloudEventStore
                 var size = w.Position - pos;
                 idx.WriteVarInt63(size); // size of header, envelope incl. payload, in bytes
 
-                headers.Add(new CloudEventHeader(e.StreamId, e.SequenceNumber, pos));
+                headers.Add(new CloudEventHeader(e.StreamId, e.SequenceNumber, pos, scratch.Length));
             }
 
             int n = 0;

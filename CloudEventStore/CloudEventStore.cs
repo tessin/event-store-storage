@@ -104,10 +104,10 @@ namespace CloudEventStore
 
             foreach (var header in headers)
             {
-                commitTran.Insert(new CloudEventStreamEntity(header.StreamId, header.SequenceNumber, new CloudEventLogSequenceNumber(log, blockOffset + header.Offset)), echoContent: false);
+                commitTran.Insert(new CloudEventStreamEntity(header.StreamId, header.SequenceNumber, new CloudEventLogPosition(log, blockOffset + header.Offset), (int)header.Size), echoContent: false);
             }
 
-            commitTran.Insert(new CloudEventTransactionLogEntity(new CloudEventLogSequenceNumber(log, blockOffset), new CloudEventLogSequenceNumber(log, blockOffset + blockLength), idx.ToArray()), echoContent: false);
+            commitTran.Insert(new CloudEventTransactionLogEntity(new CloudEventLogPosition(log, blockOffset), new CloudEventLogPosition(log, blockOffset + blockLength), idx.ToArray()), echoContent: false);
 
             sw.Restart();
 
@@ -124,7 +124,7 @@ namespace CloudEventStore
         {
             var context = new CloudEventStoreContext(_storage);
 
-            var ct = new CloudEventLogSequenceNumber(minLsn);
+            var ct = new CloudEventLogPosition(minLsn);
 
             var results = new List<CloudEvent>();
 

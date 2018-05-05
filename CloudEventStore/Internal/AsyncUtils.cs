@@ -32,7 +32,7 @@ namespace CloudEventStore.Internal
 
     public static class AsyncUtils
     {
-        public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> taskFactory, int? maxDegreeOfConcurrency = null)
+        public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, int, Task> taskFactory, int? maxDegreeOfConcurrency = null)
         {
             var maxDegreeOfConcurrency2 = maxDegreeOfConcurrency ?? 2 * Environment.ProcessorCount;
 
@@ -40,11 +40,11 @@ namespace CloudEventStore.Internal
 
             using (var it = source.GetEnumerator())
             {
-                for (; ; )
+                for (int i = 0; ;)
                 {
                     while (tasks.Count < maxDegreeOfConcurrency2 && it.MoveNext())
                     {
-                        tasks.Add(taskFactory(it.Current));
+                        tasks.Add(taskFactory(it.Current, i++));
                     }
 
                     if (tasks.Count == 0)

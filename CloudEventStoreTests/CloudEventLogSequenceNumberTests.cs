@@ -16,16 +16,16 @@ namespace CloudEventStore
         [DataRow((1 << 25) - 1, (1L << 38) - 1)]
         public void TestMethod1(long hi, long lo)
         {
-            var a = new CloudEventLogSequenceNumber(hi, lo);
+            var a = new CloudEventLogPosition(hi, lo);
 
-            Assert.AreEqual(hi, a.LogNumber);
-            Assert.AreEqual(lo, a.SequenceNumber);
+            Assert.AreEqual(hi, a.Log);
+            Assert.AreEqual(lo, a.Position);
 
             var v = a.Value;
-            var b = new CloudEventLogSequenceNumber(v);
+            var b = new CloudEventLogPosition(v);
 
-            Assert.AreEqual(hi, b.LogNumber);
-            Assert.AreEqual(lo, b.SequenceNumber);
+            Assert.AreEqual(hi, b.Log);
+            Assert.AreEqual(lo, b.Position);
         }
     }
 }

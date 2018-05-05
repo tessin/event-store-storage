@@ -79,13 +79,13 @@ namespace CloudEventStore
 
                 var log = CloudEventBlobName.LogFromName(blob.Name);
 
-                var blob2 = store.GetAppendBlobReference(CloudEventBlobName.Log(new CloudEventLogSequenceNumber(log + 1, 0)));
+                var blob2 = store.GetAppendBlobReference(CloudEventBlobName.Log(new CloudEventLogPosition(log + 1, 0)));
                 await blob2.CreateIfNotExistsAsync();
                 return blob2;
             }
             else
             {
-                var blob = store.GetAppendBlobReference(CloudEventBlobName.Log(new CloudEventLogSequenceNumber()));
+                var blob = store.GetAppendBlobReference(CloudEventBlobName.Log(new CloudEventLogPosition()));
                 await blob.CreateIfNotExistsAsync();
                 return blob;
             }
@@ -107,7 +107,7 @@ namespace CloudEventStore
             _logBlob = null;
         }
 
-        public async Task<CloudAppendBlob> GetLogBlobAsync(CloudEventLogSequenceNumber lsn)
+        public async Task<CloudAppendBlob> GetLogBlobAsync(CloudEventLogPosition lsn)
         {
             var store = await _store;
 

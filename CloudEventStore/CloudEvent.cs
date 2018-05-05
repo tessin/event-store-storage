@@ -6,21 +6,20 @@ namespace CloudEventStore
 {
     public class CloudEvent
     {
-        public CloudEventLogSequenceNumber Id { get; }
-
+        public CloudEventLogPosition Id { get; }
         public Guid StreamId { get; }
         public int SequenceNumber { get; }
         public Guid TypeId { get; }
         public DateTimeOffset Created { get; }
         public ArraySegment<byte> Payload { get; }
 
-        public CloudEvent(CloudEventLogSequenceNumber lsn, byte[] data)
+        public CloudEvent(CloudEventLogPosition id, ArraySegment<byte> data)
         {
-            Id = lsn;
+            Id = id;
 
             var uuid = new byte[16];
 
-            var stream = new MemoryStream(data);
+            var stream = new MemoryStream(data.Array, data.Offset, data.Count, false, true);
 
             stream.Read(uuid, 0, 16);
             StreamId = new Guid(uuid);
@@ -33,7 +32,7 @@ namespace CloudEventStore
             Created = DateTimeOffset.FromUnixTimeMilliseconds(stream.ReadVarInt63());
 
             var payloadSize = stream.ReadVarInt63();
-            Payload = new ArraySegment<byte>(data, (int)stream.Position, (int)payloadSize);
+            Payload = new ArraySegment<byte>(data.Array, data.Offset + (int)stream.Position, (int)payloadSize);
         }
     }
 }

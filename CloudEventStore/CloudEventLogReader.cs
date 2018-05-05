@@ -14,7 +14,7 @@ namespace CloudEventStore
         private readonly long _log;
         private readonly long _end;
 
-        public CloudEventLogSequenceNumber Position => new CloudEventLogSequenceNumber(_log, _logStream.Position);
+        public CloudEventLogPosition Position => new CloudEventLogPosition(_log, _logStream.Position);
 
         public CloudEventLogReader(Stream logStream, long log, long end)
         {
@@ -37,7 +37,7 @@ namespace CloudEventStore
                 {
                     throw new InvalidOperationException("undefined behavior");
                 }
-                _current = new CloudEvent(new CloudEventLogSequenceNumber(_log, pos), bytes);
+                _current = new CloudEvent(new CloudEventLogPosition(_log, pos), new ArraySegment<byte>(bytes));
                 return true;
             }
             _current = null;

@@ -16,17 +16,17 @@ namespace CloudEventStore
 
             var b = new TableBatchOperation();
 
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(0, 0).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(0, 2).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(0, 3).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(0, 5).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(0, 11).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(0, 0).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(0, 2).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(0, 3).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(0, 5).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(0, 11).ToString() }, false);
 
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(1, 0).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(1, 2).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(1, 3).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(1, 5).ToString() }, false);
-            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogSequenceNumber(1, 11).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(1, 0).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(1, 2).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(1, 3).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(1, 5).ToString() }, false);
+            b.Insert(new DynamicTableEntity { PartitionKey = "commit", RowKey = new CloudEventLogPosition(1, 11).ToString() }, false);
 
             await table.ExecuteBatchAsync(b);
 
@@ -38,9 +38,9 @@ namespace CloudEventStore
                             TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "commit"),
                             TableOperators.And,
                             TableQuery.CombineFilters(
-                                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, new CloudEventLogSequenceNumber(0, 2).ToString()),
+                                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, new CloudEventLogPosition(0, 2).ToString()),
                                 TableOperators.And,
-                                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, new CloudEventLogSequenceNumber(0, 5).ToString())
+                                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, new CloudEventLogPosition(0, 5).ToString())
                             )
                         )
                 };
@@ -62,7 +62,7 @@ namespace CloudEventStore
                     TakeCount = 1
                 };
 
-                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogSequenceNumber(0, 0).ToString() };
+                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogPosition(0, 0).ToString() };
 
                 var results = await table.ExecuteQuerySegmentedAsync(q, ct);
 
@@ -79,7 +79,7 @@ namespace CloudEventStore
                     TakeCount = 1
                 };
 
-                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogSequenceNumber(1, 9).ToString() };
+                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogPosition(1, 9).ToString() };
 
                 var results = await table.ExecuteQuerySegmentedAsync(q, ct);
 
@@ -96,15 +96,15 @@ namespace CloudEventStore
                         TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "commit"),
                         TableOperators.And,
                         TableQuery.CombineFilters(
-                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, CloudEventLogSequenceNumber.MinValue.ToString()),
+                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, CloudEventLogPosition.MinValue.ToString()),
                             TableOperators.And,
-                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, CloudEventLogSequenceNumber.MaxValue.ToString())
+                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, CloudEventLogPosition.MaxValue.ToString())
                         )
                     ),
                     TakeCount = 1
                 };
 
-                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogSequenceNumber(0, 12).ToString() };
+                var ct = new TableContinuationToken { NextPartitionKey = "commit", NextRowKey = new CloudEventLogPosition(0, 12).ToString() };
 
                 var results = await table.ExecuteQuerySegmentedAsync(q, ct);
 

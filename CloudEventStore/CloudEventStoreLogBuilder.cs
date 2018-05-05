@@ -22,7 +22,7 @@ namespace CloudEventStore
 
         private TableQuerySegment<CloudEventTransactionLogEntity> _index;
 
-        public async Task<bool> SeekAsync(CloudEventLogSequenceNumber lsn)
+        public async Task<bool> SeekAsync(CloudEventLogPosition lsn)
         {
             // todo: when seeking, we might not need to fetch more data we might be able to seek within the data we already have
 
@@ -35,9 +35,9 @@ namespace CloudEventStore
                         TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, CloudEventTransaction.PartitionKey),
                         TableOperators.And,
                         TableQuery.CombineFilters(
-                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, CloudEventTransaction.RowKeyTransactionPrefix + CloudEventLogSequenceNumber.MinValue),
+                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, CloudEventTransaction.RowKeyTransactionPrefix + CloudEventLogPosition.MinValue),
                             TableOperators.And,
-                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, CloudEventTransaction.RowKeyTransactionPrefix + CloudEventLogSequenceNumber.MaxValue)
+                            TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, CloudEventTransaction.RowKeyTransactionPrefix + CloudEventLogPosition.MaxValue)
                         )
                     ),
                 TakeCount = 100 // tuning parameter
@@ -50,14 +50,14 @@ namespace CloudEventStore
             return 0 < _index.Results.Count;
         }
 
-        public async Task<CloudEventLogReader> OpenReadAsync(CloudEventLogSequenceNumber lsn)
+        public async Task<CloudEventLogReader> OpenReadAsync(CloudEventLogPosition lsn)
         {
             CloudEventTransactionLogEntity tran = null;
 
             foreach (var result in _index.Results)
             {
                 var resultEnd = result.GetEnd();
-                if ((resultEnd.LogNumber == lsn.LogNumber) & (lsn.SequenceNumber < resultEnd.SequenceNumber))
+                if ((resultEnd.Log == lsn.Log) & (lsn.Position < resultEnd.Position))
                 {
                     tran = result;
                     break;
@@ -76,9 +76,9 @@ namespace CloudEventStore
 
             var logStream = await log.OpenReadAsync();
 
-            logStream.Position = lsn.SequenceNumber; // todo: this will fail when the lsn is past the end of a full append blob and the index seeks to the next append blob
+            logStream.Position = lsn.Position; // todo: this will fail when the lsn is past the end of a full append blob and the index seeks to the next append blob
 
-            var logStreamReader = new CloudEventLogReader(logStream, tranStart.LogNumber, tranEnd.SequenceNumber);
+            var logStreamReader = new CloudEventLogReader(logStream, tranStart.Log, tranEnd.Position);
             return logStreamReader;
         }
     }

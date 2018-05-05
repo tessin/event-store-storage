@@ -11,5 +11,6 @@ namespace CloudEventStore
         public static readonly string PartitionKey = "c";
 
         public static readonly string RowKeyTransactionPrefix = "t-";
+        public static readonly string RowKeyStreamPrefix = "s-";
     }
 }

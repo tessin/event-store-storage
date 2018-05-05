@@ -2,6 +2,7 @@
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -26,6 +27,8 @@ namespace CloudEventStore
         {
             var blobClient = storageAccount.CreateCloudBlobClient();
 
+            blobClient.DefaultRequestOptions.StoreBlobContentMD5 = true;
+
             _container = Async.Lazy(async () =>
             {
                 var container = blobClient.GetContainerReference(Configuration.ContainerName);
@@ -39,13 +42,13 @@ namespace CloudEventStore
         private static string GetAppendBlobName(long logNumber)
         {
             // descending sort order
-            var lsn = new CloudEventLogSequenceNumber(CloudEventLogSequenceNumber.MaxValue.LogNumber - logNumber, 0);
-            return AppendBlobPrefix + lsn.LogNumberFixed8 + ".dat";
+            var lsn = new CloudEventLogPosition(CloudEventLogPosition.MaxValue.Log - logNumber, 0);
+            return AppendBlobPrefix + lsn.LogFixed8 + ".dat";
         }
 
         private static long GetLogNumberFromAppendBlobName(string name)
         {
-            return CloudEventLogSequenceNumber.MaxValue.LogNumber - name.FromFixed(AppendBlobPrefix.Length, 8);
+            return CloudEventLogPosition.MaxValue.Log - name.FromFixed(AppendBlobPrefix.Length, 8);
         }
 
         private async Task<string> GetAppendBlobNameFromServerAsync(CancellationToken cancellationToken)
@@ -92,7 +95,7 @@ namespace CloudEventStore
             return container.GetAppendBlobReference(_cachedAppendBlobName);
         }
 
-        public async Task<CloudEventLogSequenceNumber> AppendAsync(Stream block, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<CloudEventLogPosition> AppendAsync(Stream block, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!block.CanSeek) throw new ArgumentException("block stream not seekable", nameof(block));
 
@@ -120,11 +123,13 @@ namespace CloudEventStore
             }
 
             var logNumber = GetLogNumberFromAppendBlobName(appendBlob.Name);
-            return new CloudEventLogSequenceNumber(logNumber, sequenceNumber);
+            return new CloudEventLogPosition(logNumber, sequenceNumber);
         }
 
         private async Task<long> AppendInternalAsync(CloudAppendBlob appendBlob, Stream block, CancellationToken cancellationToken)
         {
+            if (!(block.Position < block.Length)) throw new ArgumentException("block is empty", nameof(block));
+
             // this exist to be able to impose arbitrary limits for testing purposes
 
             var sequenceNumber = await appendBlob.AppendBlockAsync(block, null, cancellationToken);
@@ -133,10 +138,95 @@ namespace CloudEventStore
             {
                 // ignore this block
 
+                // in this case the block has been written but it is not valid
+                // this is expected because the append block API doesn't guarantee
+                // that the block isn't committed twice for various reasons
+                // the table operation is necessary for both transactional integrity
+                // and as an indexing service
+
                 throw new StorageException(new RequestResult { HttpStatusCode = 409 }, null, null);
             }
 
             return sequenceNumber;
+        }
+
+        public async Task<List<CloudEventLogPositionLengthData>> GetLogSegmentedAsync(IEnumerable<CloudEventLogPositionLength> source)
+        {
+            // figure out the best way to get all data...
+
+            var b = new List<CloudEventLogPositionLength[]>();
+
+            long prevLog = 0;
+            long nextPosition = 0;
+
+            var range = new List<CloudEventLogPositionLength>();
+
+            foreach (var item in source)
+            {
+                if (0 < range.Count)
+                {
+                    if ((item.Log == prevLog) & (item.Position == nextPosition))
+                    {
+                        range.Add(item); // consecutive
+                    }
+                    else
+                    {
+                        b.Add(range.ToArray());
+                        range.Clear();
+                        range.Add(item);
+                    }
+                }
+                else
+                {
+                    range.Add(item);
+                }
+                prevLog = item.Log;
+                nextPosition = item.Position + item.Size;
+            }
+
+            if (0 < range.Count)
+            {
+                b.Add(range.ToArray());
+            }
+
+            //
+
+            var container = await _container;
+
+            var buffers = new byte[b.Count][];
+
+            await b.ForEachAsync(async (item, i) =>
+            {
+                var size = item.Sum(x => x.Size);
+                var blob = container.GetAppendBlobReference(GetAppendBlobName(item[0].Log));
+                var target = new byte[size];
+                await blob.DownloadRangeToByteArrayAsync(target, 0, item[0].Position, size);
+                buffers[i] = target;
+            }, 5);
+
+            //
+
+            var results = new List<CloudEventLogPositionLengthData>();
+
+            {
+                int i = 0;
+                foreach (var item in b)
+                {
+                    var buffer = buffers[i];
+
+                    int offset = 0;
+                    foreach (var slice in item)
+                    {
+                        var size = slice.Size;
+                        results.Add(new CloudEventLogPositionLengthData(slice.Log, slice.Position, new ArraySegment<byte>(buffer, offset, size)));
+                        offset += size;
+                    }
+
+                    i++;
+                }
+            }
+
+            return results;
         }
     }
 }

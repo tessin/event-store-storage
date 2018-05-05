@@ -153,7 +153,7 @@ namespace CloudEventStore
             var stats = new BucketManager(TimeSpan.FromSeconds(3));
             var store = new CloudEventStore(storage, stats);
 
-            await GetTestDataStream(100003).ForEachAsync((e) => store.AppendAsync(new[] { e }), 250);
+            await GetTestDataStream(100003).ForEachAsync((e, _) => store.AppendAsync(new[] { e }), 250);
 
             foreach (var bucket in stats.GetBuckets())
             {
@@ -183,7 +183,7 @@ namespace CloudEventStore
 
             // note that this is inserting a 99 events with each transaction
 
-            await Enumerable.Range(0, 1100).ForEachAsync((e) => store.AppendAsync(GetTestDataStream(99)), 25);
+            await Enumerable.Range(0, 1100).ForEachAsync((e, _) => store.AppendAsync(GetTestDataStream(99)), 25);
 
             foreach (var bucket in stats.GetBuckets())
             {

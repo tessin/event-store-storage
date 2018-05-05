@@ -1,34 +1,42 @@
 ﻿using CloudEventStore.Internal;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
+using System.Collections.Generic;
 
 namespace CloudEventStore
 {
-    class CloudEventTransactionLogEntity : TableEntity
+    class CloudEventTransactionLogEntity : ITableEntity
     {
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
+        public string ETag { get; set; }
+
+        public int Log { get; set; }
+        public long Position { get; set; }
+        public byte[] Size { get; set; }
+
         public CloudEventTransactionLogEntity()
         {
         }
 
-        public CloudEventTransactionLogEntity(CloudEventLogSequenceNumber tranStart, CloudEventLogSequenceNumber tranEnd, byte[] idx)
+        public CloudEventTransactionLogEntity(CloudEventLogPosition tranStart, CloudEventLogPosition tranEnd, byte[] idx)
         {
-            var tranEnd2 = new CloudEventLogSequenceNumber(tranEnd.LogNumber, tranEnd.SequenceNumber - 1); // see GetEnd
+            var tranEnd2 = new CloudEventLogPosition(tranEnd.Log, tranEnd.Position - 1); // see GetEnd
 
             PartitionKey = CloudEventTransaction.PartitionKey;
-            RowKey = CloudEventTransaction.RowKeyTransactionPrefix + tranEnd.LogNumberFixed8 + "-" + tranEnd2.SequenceNumberFixed12;
-            LSN = tranStart.Value;
-            IDX = idx;
+            RowKey = CloudEventTransaction.RowKeyTransactionPrefix + tranEnd.LogFixed8 + "-" + tranEnd2.PositionFixed12;
+            Position = tranStart.Value;
+            Size = idx;
         }
 
-        public long LSN { get; set; }
-        public byte[] IDX { get; set; }
-
-        public CloudEventLogSequenceNumber GetStart()
+        public CloudEventLogPosition GetStart()
         {
-            return new CloudEventLogSequenceNumber(LSN);
+            return new CloudEventLogPosition(Position);
         }
 
-        public CloudEventLogSequenceNumber GetEnd()
+        public CloudEventLogPosition GetEnd()
         {
             // l-00000000-000000000000
             // 01234567890123456789012
@@ -37,7 +45,23 @@ namespace CloudEventStore
             var log = RowKey.FromFixed(2, 8);
             var sequenceNumber = RowKey.FromFixed(11, 12);
 
-            return new CloudEventLogSequenceNumber(log, sequenceNumber + 1);
+            return new CloudEventLogPosition(log, sequenceNumber + 1);
+        }
+
+        public void ReadEntity(IDictionary<string, EntityProperty> properties, OperationContext operationContext)
+        {
+            Log = properties["L"].Int32Value.Value;
+            Position = properties["P"].Int64Value.Value;
+            Size = properties["T"].BinaryValue;
+        }
+
+        public IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
+        {
+            var d = new Dictionary<string, EntityProperty>();
+            d.Add("L", new EntityProperty(Log));
+            d.Add("P", new EntityProperty(Position));
+            d.Add("T", new EntityProperty(Size));
+            return d;
         }
     }
 }

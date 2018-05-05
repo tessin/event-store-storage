@@ -150,7 +150,7 @@ namespace CloudEventStore
             return sequenceNumber;
         }
 
-        public async Task<List<CloudEventLogPositionLengthData>> GetLogSegmentedAsync(IEnumerable<CloudEventLogPositionLength> source)
+        public async Task<List<CloudEventLogPositionLengthData>> FetchAsync(IEnumerable<CloudEventLogPositionLength> source, CancellationToken cancellationToken = default(CancellationToken))
         {
             // figure out the best way to get all data...
 
@@ -200,9 +200,9 @@ namespace CloudEventStore
                 var size = item.Sum(x => x.Size);
                 var blob = container.GetAppendBlobReference(GetAppendBlobName(item[0].Log));
                 var target = new byte[size];
-                await blob.DownloadRangeToByteArrayAsync(target, 0, item[0].Position, size);
+                await blob.DownloadRangeToByteArrayAsync(target, 0, item[0].Position, size, cancellationToken);
                 buffers[i] = target;
-            }, 5);
+            }, 5, cancellationToken);
 
             //
 

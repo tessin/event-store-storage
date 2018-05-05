@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CloudEventStore.Internal
@@ -32,7 +33,7 @@ namespace CloudEventStore.Internal
 
     public static class AsyncUtils
     {
-        public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, int, Task> taskFactory, int? maxDegreeOfConcurrency = null)
+        public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, int, Task> taskFactory, int? maxDegreeOfConcurrency = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var maxDegreeOfConcurrency2 = maxDegreeOfConcurrency ?? 2 * Environment.ProcessorCount;
 
@@ -42,7 +43,7 @@ namespace CloudEventStore.Internal
             {
                 for (int i = 0; ;)
                 {
-                    while (tasks.Count < maxDegreeOfConcurrency2 && it.MoveNext())
+                    while (((tasks.Count < maxDegreeOfConcurrency2) & !cancellationToken.IsCancellationRequested) && it.MoveNext())
                     {
                         tasks.Add(taskFactory(it.Current, i++));
                     }

@@ -10,15 +10,15 @@ namespace CloudEventStore
     {
         public readonly Guid StreamId;
         public readonly int SequenceNumber;
-        public readonly long Offset;
-        public readonly long Size;
+        public readonly long Position;
+        public readonly long Length;
 
-        public CloudEventHeader(Guid streamId, int sequenceNumber, long offset, long size)
+        public CloudEventHeader(Guid streamId, int sequenceNumber, long position, long length)
         {
             this.StreamId = streamId;
             this.SequenceNumber = sequenceNumber;
-            this.Offset = offset;
-            this.Size = size;
+            this.Position = position;
+            this.Length = length;
         }
     }
 }

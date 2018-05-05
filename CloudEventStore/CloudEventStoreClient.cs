@@ -67,18 +67,18 @@ namespace CloudEventStore
             {
                 foreach (var h in headers)
                 {
-                    committed.Add(new CloudEventLogPosition(lsn.Log, lsn.Position + h.Offset).Value);
+                    committed.Add(new CloudEventLogPosition(lsn.Log, lsn.Position + h.Position).Value);
                 }
             }
 
             return committed;
         }
 
-        public async Task<CloudEventLogSegment2> GetLogSegmentedAsync(CloudEventLogPosition next, int takeCount = 1000, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<CloudEventLogSegment> GetLogSegmentedAsync(CloudEventLogPosition next, int takeCount = 1000, CancellationToken cancellationToken = default(CancellationToken))
         {
             var results1 = await _tableClient.GetLogSegmentedAsync(next, takeCount, cancellationToken);
 
-            var results2 = await _blobClient.GetLogSegmentedAsync(results1.Results);
+            var results2 = await _blobClient.FetchAsync(results1.Results);
 
             var results3 = new List<CloudEvent>();
 
@@ -96,14 +96,14 @@ namespace CloudEventStore
                 next2 = new CloudEventLogPosition(lst.Log, lst.Position + lst.Data.Count);
             }
 
-            return new CloudEventLogSegment2(results3, next2);
+            return new CloudEventLogSegment(results3, next2);
         }
 
         public async Task<CloudEventStreamSegment> GetStreamSegmentedAsync(CloudEventStreamSequence next, int takeCount = 1000, CancellationToken cancellationToken = default(CancellationToken))
         {
             var results1 = await _tableClient.GetStreamSegmentedAsync(next, takeCount, cancellationToken);
 
-            var results2 = await _blobClient.GetLogSegmentedAsync(results1.Results);
+            var results2 = await _blobClient.FetchAsync(results1.Results);
 
             var results3 = new List<CloudEvent>();
 

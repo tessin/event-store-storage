@@ -9,12 +9,12 @@ namespace CloudEventStore
     public struct CloudEventLogSegment
     {
         public List<CloudEvent> Results { get; }
-        public long ContinuationToken { get; }
+        public CloudEventLogPosition Next { get; }
 
-        public CloudEventLogSegment(List<CloudEvent> results, long value)
+        public CloudEventLogSegment(List<CloudEvent> results, CloudEventLogPosition next)
         {
-            Results = results;
-            ContinuationToken = value;
+            this.Results = results;
+            this.Next = next;
         }
     }
 }

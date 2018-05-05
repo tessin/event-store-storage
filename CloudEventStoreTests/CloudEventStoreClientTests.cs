@@ -40,7 +40,7 @@ namespace CloudEventStore
             client.Configuration.ContainerName = containerName;
             await client.AppendAsync(new MemoryStream(new byte[] { 2, 3, 5, 7, 11 }));
 
-            var result = await client.GetLogSegmentedAsync(new[] {
+            var result = await client.FetchAsync(new[] {
                 new CloudEventLogPositionLength(0, 0, 1),
                 new CloudEventLogPositionLength(0, 1, 1),
                 new CloudEventLogPositionLength(0, 2, 1),

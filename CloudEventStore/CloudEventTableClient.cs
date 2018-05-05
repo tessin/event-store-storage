@@ -56,9 +56,9 @@ namespace CloudEventStore
             foreach (var h in headers)
             {
                 var lsn = new CloudEventLogPosition(lsnStart.Log, lsnStart.Position + p);
-                b.Insert(new CloudEventStreamEntity(h.StreamId, h.SequenceNumber, lsn, (int)h.Size), echoContent: false);
-                idx.WriteVarInt63(h.Size);
-                p += h.Size;
+                b.Insert(new CloudEventStreamEntity(h.StreamId, h.SequenceNumber, lsn, (int)h.Length), echoContent: false);
+                idx.WriteVarInt63(h.Length);
+                p += h.Length;
             }
 
             var lsnEnd = new CloudEventLogPosition(lsnStart.Log, lsnStart.Position + p);

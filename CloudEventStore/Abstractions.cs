@@ -13,7 +13,10 @@ namespace CloudEventStore
             CancellationToken cancellationToken = default(CancellationToken)
         );
 
-        Task<List<CloudEventLogPositionLengthData>> GetLogSegmentedAsync(IEnumerable<CloudEventLogPositionLength> source);
+        Task<List<CloudEventLogPositionLengthData>> FetchAsync(
+            IEnumerable<CloudEventLogPositionLength> source,
+            CancellationToken cancellationToken = default(CancellationToken)
+        );
     }
 
     public interface ICloudEventTableClient
@@ -27,13 +30,13 @@ namespace CloudEventStore
         Task<CloudEventLogPositionLengthSegment> GetLogSegmentedAsync(
            CloudEventLogPosition lsn,
            int takeCount,
-           CancellationToken cancellationToken
+           CancellationToken cancellationToken = default(CancellationToken)
        );
 
         Task<CloudEventLogPositionLengthSegment> GetStreamSegmentedAsync(
             CloudEventStreamSequence next,
             int takeCount,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken = default(CancellationToken)
         );
     }
 

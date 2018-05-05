@@ -131,14 +131,6 @@ namespace CloudEventStore
             }
         }
 
-        protected async Task<CloudEventStorage> GetEventStorage()
-        {
-            var task1 = GetContainerAsync();
-            var task2 = GetTable();
-            var eventStorage = new CloudEventStorage(StorageAccount, (await task1).Name, (await task2).Name);
-            return eventStorage;
-        }
-
         [TestCleanup]
         public void TestCleanup()
         {

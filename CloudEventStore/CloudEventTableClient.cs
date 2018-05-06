@@ -109,7 +109,7 @@ namespace CloudEventStore
 
             foreach (var result in querySegment.Results)
             {
-                var idx = new MemoryStream(result.Size);
+                var idx = new MemoryStream(result.Lengths);
 
                 var p = 0L;
                 while (idx.Position < idx.Length)
@@ -158,7 +158,7 @@ namespace CloudEventStore
 
             foreach (var item in querySegment.Results)
             {
-                results2.Add(new CloudEventLogPositionLength(item.Log, item.Position, item.Size));
+                results2.Add(new CloudEventLogPositionLength(item.Log, item.Position, item.Length));
             }
 
             return new CloudEventLogPositionLengthSegment(results2, querySegment.ContinuationToken);

@@ -13,8 +13,7 @@ namespace CloudEventStore
     public class CloudEventBlobClientConfiguration
     {
         public int MaxBlockCount { get; set; } = 50000;
-        //public long? MaxBlobSize { get; set; } // todo: ???
-        public string ContainerName { get; set; } = "event-store";
+        public string ContainerName { get; set; } = "event-log";
     }
 
     public class CloudEventBlobClient : ICloudEventBlobClient

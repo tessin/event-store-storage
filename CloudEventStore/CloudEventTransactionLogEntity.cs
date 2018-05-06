@@ -15,20 +15,20 @@ namespace CloudEventStore
 
         public int Log { get; set; }
         public long Position { get; set; }
-        public byte[] Size { get; set; }
+        public byte[] Lengths { get; set; }
 
         public CloudEventTransactionLogEntity()
         {
         }
 
-        public CloudEventTransactionLogEntity(CloudEventLogPosition tranStart, CloudEventLogPosition tranEnd, byte[] idx)
+        public CloudEventTransactionLogEntity(CloudEventLogPosition tranStart, CloudEventLogPosition tranEnd, byte[] lengths)
         {
             var tranEnd2 = new CloudEventLogPosition(tranEnd.Log, tranEnd.Position - 1); // see GetEnd
 
             PartitionKey = CloudEventTransaction.PartitionKey;
             RowKey = CloudEventTransaction.RowKeyTransactionPrefix + tranEnd.LogFixed8 + "-" + tranEnd2.PositionFixed12;
             Position = tranStart.Value;
-            Size = idx;
+            Lengths = lengths;
         }
 
         public CloudEventLogPosition GetStart()
@@ -52,7 +52,7 @@ namespace CloudEventStore
         {
             Log = properties["L"].Int32Value.Value;
             Position = properties["P"].Int64Value.Value;
-            Size = properties["T"].BinaryValue;
+            Lengths = properties["T"].BinaryValue;
         }
 
         public IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
@@ -60,7 +60,7 @@ namespace CloudEventStore
             var d = new Dictionary<string, EntityProperty>();
             d.Add("L", new EntityProperty(Log));
             d.Add("P", new EntityProperty(Position));
-            d.Add("T", new EntityProperty(Size));
+            d.Add("T", new EntityProperty(Lengths));
             return d;
         }
     }

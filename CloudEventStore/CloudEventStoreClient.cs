@@ -1,5 +1,4 @@
 ﻿using CloudEventStore.Internal;
-using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.IO;

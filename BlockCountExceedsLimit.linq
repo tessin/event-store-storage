@@ -24,10 +24,13 @@ async Task Main()
 	}
 	catch (StorageException ex)
 	{
-		ex.Message.Dump();
-		
+		ex.RequestInformation.Dump();
+
 		var w = new StringWriter();
-		ex.RequestInformation.WriteXml(XmlWriter.Create(w));
-		w.Dump();
+		using (var x = XmlWriter.Create(w))
+		{
+			ex.RequestInformation.WriteXml(x);
+		}
+		w.ToString().Dump();
 	}
 }

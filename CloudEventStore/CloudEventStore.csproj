@@ -14,4 +14,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CloudEventStore.Client\CloudEventStore.Client.csproj" />
+  </ItemGroup>
+
 </Project>

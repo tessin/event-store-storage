@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CloudEventStore.Internal
 {
@@ -277,6 +274,11 @@ namespace CloudEventStore.Internal
                     sb.Append('.'); // mask
                 }
             }
+        }
+
+        public static MemoryStream GetStream(this ArraySegment<byte> slice, bool writable = false, bool publiclyVisible = true)
+        {
+            return new MemoryStream(slice.Array, slice.Offset, slice.Count, writable, publiclyVisible);
         }
     }
 }

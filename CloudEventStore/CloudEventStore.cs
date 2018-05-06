@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace CloudEventStore
 {
-    public class CloudEventStoreClient : ICloudEventStoreClient
+    public class CloudEventStore : ICloudEventStoreClient
     {
         private readonly ICloudEventBlobClient _blobClient;
         private readonly ICloudEventTableClient _tableClient;
 
-        public CloudEventStoreClient(ICloudEventBlobClient blobClient, ICloudEventTableClient tableClient)
+        public CloudEventStore(ICloudEventBlobClient blobClient, ICloudEventTableClient tableClient)
         {
             _blobClient = blobClient;
             _tableClient = tableClient;
@@ -38,15 +38,7 @@ namespace CloudEventStore
 
                 scratch.SetLength(0);
 
-                scratch.Write(e.StreamId.ToByteArray(), 0, 16);
-                scratch.WriteVarInt63(e.SequenceNumber);
-                scratch.Write(e.TypeId.ToByteArray(), 0, 16);
-                scratch.WriteVarInt63(e.Created.ToUnixTimeMilliseconds());
-                scratch.WriteVarInt63(e.Payload.Count);
-                if (0 < e.Payload.Count)
-                {
-                    scratch.Write(e.Payload.Array, e.Payload.Offset, e.Payload.Count);
-                }
+                e.WriteTo(scratch);
 
                 var pos = block.Position;
 
@@ -81,9 +73,13 @@ namespace CloudEventStore
 
             var results3 = new List<CloudEvent>();
 
+            byte[] scratch = null;
             foreach (var item in results2)
             {
-                results3.Add(new CloudEvent(new CloudEventLogPosition(item.Log, item.Position), item.Data));
+                var e = new CloudEvent();
+                e.Id = new CloudEventLogPosition(item.Log, item.Position).Value;
+                e.ReadFrom(item.Data.GetStream(), ref scratch);
+                results3.Add(e);
             }
 
             CloudEventLogPosition next2 = next;
@@ -106,9 +102,13 @@ namespace CloudEventStore
 
             var results3 = new List<CloudEvent>();
 
+            byte[] scratch = null;
             foreach (var item in results2)
             {
-                results3.Add(new CloudEvent(new CloudEventLogPosition(item.Log, item.Position), item.Data));
+                var e = new CloudEvent();
+                e.Id = new CloudEventLogPosition(item.Log, item.Position).Value;
+                e.ReadFrom(item.Data.GetStream(), ref scratch);
+                results3.Add(e);
             }
 
             CloudEventStreamSequence next2 = next;

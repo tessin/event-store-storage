@@ -120,12 +120,12 @@ namespace CloudEventStore
             Assert.AreEqual(10, segment.Results[3].Position);
         }
 
-        private CloudEventStoreClient GetEventStoreClient()
+        private CloudEventStore GetEventStoreClient()
         {
             var blobClient = new CloudEventBlobClient(StorageAccount) { Configuration = { ContainerName = GetContainerName() } };
             var tableClient = new CloudEventTableClient(StorageAccount) { Configuration = { TableName = GetTableName() } };
 
-            return new CloudEventStoreClient(blobClient, tableClient);
+            return new CloudEventStore(blobClient, tableClient);
         }
 
         [TestMethod]

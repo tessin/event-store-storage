@@ -10,19 +10,19 @@ namespace CloudEventStore
 {
     static class Shared
     {
-        private static readonly CloudEventStoreClientFactory _factory;
+        private static readonly CloudEventStoreFactory _factory;
 
         static Shared()
         {
-            _factory = new CloudEventStoreClientFactory();
+            _factory = new CloudEventStoreFactory();
             _factory.StorageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
         }
 
-        private static readonly ConcurrentDictionary<string, CloudEventStoreClient> _collections = new ConcurrentDictionary<string, CloudEventStoreClient>(StringComparer.Ordinal);
+        private static readonly ConcurrentDictionary<string, CloudEventStore> _collections = new ConcurrentDictionary<string, CloudEventStore>(StringComparer.Ordinal);
 
-        public static CloudEventStoreClient Collection(string collectionName)
+        public static CloudEventStore Collection(string collectionName)
         {
-            CloudEventStoreClient client;
+            CloudEventStore client;
 
             _Create:
             if (!_collections.TryGetValue(collectionName, out client))

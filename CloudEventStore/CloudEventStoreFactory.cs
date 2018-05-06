@@ -3,11 +3,11 @@ using System;
 
 namespace CloudEventStore
 {
-    public class CloudEventStoreClientFactory
+    public class CloudEventStoreFactory
     {
         public CloudStorageAccount StorageAccount { get; set; }
 
-        public CloudEventStoreClient Create(string collectionName = "default")
+        public CloudEventStore Create(string collectionName = "default")
         {
             if (StorageAccount == null)
             {
@@ -25,7 +25,7 @@ namespace CloudEventStore
             var tableClient = new CloudEventTableClient(StorageAccount);
             tableClient.Configuration.TableName = "EventStore" + char.ToUpperInvariant(collectionName[0]) + collectionName.Substring(1).ToLowerInvariant();
 
-            var client = new CloudEventStoreClient(blobClient, tableClient);
+            var client = new CloudEventStore(blobClient, tableClient);
             return client;
         }
     }

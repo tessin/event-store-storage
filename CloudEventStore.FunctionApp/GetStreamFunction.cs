@@ -1,29 +1,43 @@
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 
 namespace CloudEventStore
 {
+    public class GetStreamFunctionResponse
+    {
+        [JsonProperty("results")]
+        public List<CloudEvent> Results { get; set; }
+
+        [JsonProperty("next")]
+        public Uri Next { get; set; }
+    }
+
     public static class GetStreamFunction
     {
         [FunctionName("GetStreamFunction")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event-store/{collection}/stream/{streamId}")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event-store/{collection}/stream/{stream}")]
             HttpRequestMessage req,
             string collection,
-            string streamId,
+            string stream,
             TraceWriter log,
             CancellationToken cancellationToken
         )
         {
-            var streamId2 = new Guid(streamId); // todo: bad request
+            Guid streamId;
+            if (!Guid.TryParseExact(stream, "D", out streamId))
+            {
+                return req.CreateResponse(HttpStatusCode.BadRequest);
+            }
 
             var query = req.GetQueryNameValuePairs();
 
@@ -32,9 +46,9 @@ namespace CloudEventStore
 
             var client = Shared.Collection(collection);
 
-            var segment = await client.GetStreamSegmentedAsync(new CloudEventStreamSequence(streamId2, offset), take, cancellationToken);
+            var segment = await client.GetStreamSegmentedAsync(new CloudEventStreamSequence(streamId, offset), take, cancellationToken);
 
-            var res = new GetLogFunctionResponse();
+            var res = new GetStreamFunctionResponse();
 
             res.Results = segment.Results;
 
